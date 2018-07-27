@@ -24,9 +24,9 @@ the initial entry point of the invocation chain receives performance metrics of 
 This simple mechanism allows us to
 
 * Collect metrics transparently of complex invocation chains
-* keep infrastrucure costs low. We do not need a big central data store
-* reduce or eliminate security concerns
-* support our development teams to keep an eye on application and system performance
+* Keep infrastrucure costs low. We do not need a big central data store
+* Reduce or eliminate security concerns
+* Support our development teams to keep an eye on application and system performance
 
 ## How
 
