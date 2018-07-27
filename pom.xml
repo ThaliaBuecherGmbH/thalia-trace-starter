@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.3.RELEASE</version>
+    </parent>
+
+    <groupId>de.thalia.boot.trace</groupId>
+    <artifactId>thalia-trace-starter</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Thalia Spring Boot starter for call tracing</name>
+
+    <description>
+        This Starter provides call tracing facilities.
+    </description>
+
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <organization>
+        <name>Thalia Bücher GmbH</name>
+        <url>http://unternehmen.thalia.de</url>
+    </organization>
+
+    <inceptionYear>2018</inceptionYear>
+
+    <developers>
+        <developer>
+            <id>h.busch</id>
+            <name>Hendrik Busch</name>
+            <email>h.busch@thalia.de</email>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>m.sertic</id>
+            <name>Mirko Sertic</name>
+            <email>m.sertic@thalia.de</email>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.netflix.hystrix</groupId>
+            <artifactId>hystrix-core</artifactId>
+            <version>1.5.12</version>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>net.ttddyy</groupId>
+            <artifactId>datasource-proxy</artifactId>
+            <version>1.4.7</version>
+        </dependency>
+
+    </dependencies>
+</project>
