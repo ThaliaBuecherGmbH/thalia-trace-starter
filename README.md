@@ -1,5 +1,7 @@
 # Thalia Spring Boot starter for call tracing
 
+[![Build Status](https://travis-ci.org/ThaliaBuecherGmbH/thalia-trace-starter.svg?branch=master)](https://travis-ci.org/ThaliaBuecherGmbH/thalia-trace-starter)
+
 ## Why
 
 Our services live in an interconnected and distributed world. Services take requests, have to talk to other services
