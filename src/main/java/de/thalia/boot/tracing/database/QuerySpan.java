@@ -36,7 +36,7 @@ public class QuerySpan extends Span {
      * Die Gesamtanzahl der SQL-Quries, die im Rahmen der Datenbankaktion ausgeführt wurden. Überlicherweise ist das genau eine,
      * außer bei Batch-Statements.
      */
-    private final int anzahlQueries;
+    private final int numberQueries;
 
     /**
      * Der (Bean-)Name der Datasource, mit der die Aktion ausgeführt wurde.
@@ -52,15 +52,15 @@ public class QuerySpan extends Span {
      *            siehe Feldbeschreibung
      * @param duration
      *            siehe Feldbeschreibung
-     * @param anzahlQueries
+     * @param numberQueries
      *            siehe Feldbeschreibung
      * @param datasourceName
      *            siehe Feldbeschreibung
      */
-    public QuerySpan(final String name, final long startTime, final long duration, final int anzahlQueries,
+    public QuerySpan(final String name, final long startTime, final long duration, final int numberQueries,
             final String datasourceName) {
         super(name, startTime, duration);
-        this.anzahlQueries = anzahlQueries;
+        this.numberQueries = numberQueries;
         this.datasourceName = datasourceName;
     }
 }

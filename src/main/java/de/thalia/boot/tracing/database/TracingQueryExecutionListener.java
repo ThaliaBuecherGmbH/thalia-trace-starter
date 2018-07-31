@@ -78,7 +78,7 @@ public class TracingQueryExecutionListener implements QueryExecutionListener {
 
         if (null != mergeSpan) {
             final QuerySpan mergedSpan = new QuerySpan(executionInfo.getDataSourceName(), mergeSpan.getStartTime(),
-                    mergeSpan.getDuration() + span.getDuration(), mergeSpan.getAnzahlQueries() + span.getAnzahlQueries(),
+                    mergeSpan.getDuration() + span.getDuration(), mergeSpan.getNumberQueries() + span.getNumberQueries(),
                     mergeSpan.getDatasourceName());
             tracer.replaceLatestSpan(mergedSpan);
         } else {

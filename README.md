@@ -6,37 +6,37 @@ Our services live in an interconnected and distributed world. Services take requ
 and compute results based on gathered data. This distributed nature makes it hard to track application performance and
 find potential performance bottlenecks. 
 
-There are some very famous tracing solutions (e.g. Zipkin) available. Most of them gather invocation traces in some way
+There are some very famous tracing solutions (e.g. Zipkin/Opentracing) available. Most of them gather invocation traces in some way
 and write them back to a central data store. Traces can then be analyzed. This concept introduces some drawbacks:
 
 * The central data store tend to become *really huge* on high traffic sites
 * Tracing is always enabled. We gather a lot of data, but most of it isn't touched again
-* Infrastructure costs can explode
+* Infrastructure costs can and *will* explode
 * We introduce a possible (security) singularity in form of the central data store
 
 And here comes our starter into play!
 
 Our starter provides tracing and monitoring on a per request basis. By default performance
 metrics are gathered for any incoming request. The application only exposes those metrics as 
-part of its reponse *if the caller demands it*. Metrics are therefore not written to a central data store, 
+part of its response *if the caller demands it*. Metrics are therefore not written to a central data store, 
 but provided to the caller, who can itself propagate the metrics to its caller and so on. As the final result, 
 the initial entry point of the invocation chain receives performance metrics of the whole chain!
 This simple mechanism allows us to
 
 * Collect metrics transparently of complex invocation chains
-* Keep infrastrucure costs low. We do not need a big central data store
+* Keep infrastructure costs low. We do not need a big central data store
 * Reduce or eliminate security concerns
 * Support our development teams to keep an eye on application and system performance
 
 ## How
 
-Internally metrics are gathered by instrumenting Spring RestTemplate or DataSources. 
-These instrumentation writes invocation statistics as spans into a HTTP request specific repository
-This repository is managed by a ServletFilter, which is weaved around the whole application. This
+Internally metrics are gathered by instrumenting Spring `org.springframework.web.client.RestTemplate` 
+or `java.sql.DataSource`. These instrumentation writes invocation statistics as spans into a HTTP request specific repository
+This repository is managed by a `javax.servlet.Filter`, which is weaved around the whole application. This
 filter toggles monitoring feature state and exposes the gathered spans to the caller if he demands it.
 
 The whole instrumentation part is handled by a Spring Boot starter. We follow a zero
-configuration approach. 
+configuration approach.
 
 ## Minimum requirements
 
@@ -46,11 +46,88 @@ configuration approach.
 ## Available instrumentations
 
 * HTTP (Spring MVC, Spring Boot Actuator, Servlets)
-* Spring managed RestTemplateBuilder
-* Spring managed JDBC DataSources
-* Hystrix commands
+* Spring managed `org.springframework.web.client.RestTemplate`
+* Spring managed `org.springframework.boot.web.client.RestTemplateBuilder`
+* Spring managed JDBC `java.sql.DataSource`
+* Hystrix commands by custom `com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook`
 
-## Examples
+## Configuration
 
-## Configuration and extension points
+Add the following Maven dependency to your Spring Boot 2 project:
 
+```
+<dependency>
+    <groupId>de.thalia.boot.trace</groupId>
+    <artifactId>thalia-trace-starter</artifactId>
+    <version>0.0.2</version>
+</dependency>
+```
+
+This will automatically enable the feature. Invocation stats are automatically collected on
+a per request basis, but not yet exposed to the outside world. This must be enabled by sending
+the following HTTP header:
+
+```
+THALIATRACE: true
+```
+
+Please note that Datasource instrumentation is disabled by default. You have to enable it by 
+setting the following configuration property:
+
+```
+tracing.database.enabled: true
+```
+
+How we are getting two new HTTP headers as part of the response:
+
+```
+HALIATRACE: <JSONDATA>
+``` 
+
+Here is an example of such a JSON structure:
+
+```
+{
+  "applicationName": "Suchservice (Integ)",
+  "hostName": "fullqualifiedhostname.domain",
+  "startTime": 1533031487780,
+  "duration": 1062,
+  "spans": [
+    {
+      "name": "dataSourceSuchserviceDb",
+      "startTime": 1533031487786,
+      "duration": 1,
+      "numberQueries": 1,
+      "datasourceName": "dataSourceSuchserviceDb"
+    },
+    {
+      "name": "Solr#SolrHystrixCommand",
+      "startTime": 1533031487789,
+      "duration": 592
+    },
+    {
+      "name": "Artikelservice#OnlineArtikelserviceHystrixCommand",
+      "startTime": 1533031488398,
+      "duration": 114
+    },
+    {
+      "name": "TouchpointTemplate#TouchpointTemplateHystrixCommand",
+      "startTime": 1533031488531,
+      "duration": 291
+    }
+  ]
+}
+```
+
+As part of the response you are also HTTP Server-Timing header as 
+described [by the W3C Server Timing working draft](https://www.w3.org/TR/server-timing). 
+
+## Extension points
+
+Gathered invocation statistics are on a per request basis and not collected in a central data store by
+design. But it is possible to write aggregated information into a time series database for operational
+or KPI monitoring. This can be done by providing a custom implementation of the 
+`de.thalia.boot.tracing.MetricExporter` interface. Our implementation at Thalia writes the aggregated
+data into an Influx time series database, and we use Grafana to create nice dashboards like this one:
+
+![Example dashboard](doc/exampledashboard.png)
