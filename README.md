@@ -119,8 +119,11 @@ Here is an example of such a JSON structure:
 }
 ```
 
-As part of the response you are also HTTP Server-Timing header as 
-described [by the W3C Server Timing working draft](https://www.w3.org/TR/server-timing). 
+As part of the response you also get a HTTP Server-Timing header as 
+described [by the W3C Server Timing working draft](https://www.w3.org/TR/server-timing).
+This header is automatically integrated into the Chrome Developer Tools Timing information. This is neat,
+as now QA engineers get a quick overview of application performance metrics and possible
+bottlenecks. 
 
 ## Extension points
 
