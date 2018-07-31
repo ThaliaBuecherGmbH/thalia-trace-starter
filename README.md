@@ -30,8 +30,8 @@ This simple mechanism allows us to
 
 ## How
 
-Internally metrics are gathered by instrumenting Spring `org.springframework.web.client.RestTemplate` 
-or `java.sql.DataSource`. These instrumentation writes invocation statistics as spans into a HTTP request specific repository
+Internally metrics are gathered by instrumenting Spring managed `org.springframework.web.client.RestTemplate` 
+and `java.sql.DataSource` beans. These instrumentation writes invocation statistics as spans into a HTTP request specific repository
 This repository is managed by a `javax.servlet.Filter`, which is weaved around the whole application. This
 filter toggles monitoring feature state and exposes the gathered spans to the caller if he demands it.
 
