@@ -16,9 +16,6 @@
 package de.thalia.boot.tracing;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -127,16 +124,14 @@ public class TraceOutputFilter implements Filter {
      *            die aktuelle Response
      */
     private static void writeServerTimingHeader(final TraceLog traceLog, final HttpServletResponse response) {
-        final List<String> timings = new ArrayList<>(10);
-        timings.add("total=" + traceLog.getDuration() + "; \"Gesamt\"");
+        response.addHeader(SERVER_TIMING_HEADER, "total;desc=\"Total\";dur=" + traceLog.getDuration());
         if (null != traceLog.getSpans()) {
             int index = 0;
             for (final Span span : traceLog.getSpans()) {
-                timings.add("S" + index + "=" + span.getDuration() + ";\"" + span.getName() + "\"");
+                response.addHeader(SERVER_TIMING_HEADER, "S" + index + ";desc=\"" + span.getName() + "\";dur=" + span.getDuration());
                 index++;
             }
         }
-        response.addHeader(SERVER_TIMING_HEADER, timings.stream().collect(Collectors.joining(", ")));
     }
 
     @Override

@@ -127,6 +127,8 @@ This header is automatically integrated into the Chrome Developer Tools Timing i
 as now QA engineers get a quick overview of application performance metrics and possible
 bottlenecks. 
 
+![Server timing in Chrome Dev Tools](doc/servertiming.png)
+
 ## Extension points
 
 Gathered invocation statistics are on a per request basis and not collected in a central data store by

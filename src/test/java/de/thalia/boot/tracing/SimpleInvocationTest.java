@@ -120,7 +120,8 @@ public class SimpleInvocationTest {
     public void testWithoutFeatureToggle() throws Exception {
         mvc.perform(get("/api/dosomething"))
             .andExpect(status().is2xxSuccessful())
-            .andExpect(header().doesNotExist("thaliatrace"));
+            .andExpect(header().doesNotExist("thaliatrace"))
+            .andExpect(header().doesNotExist("sever-timing")).andReturn();
     }
 
     @Test
@@ -130,6 +131,8 @@ public class SimpleInvocationTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(header().exists("thaliatrace"))
                 .andReturn();
+
+        assertEquals(1, result.getResponse().getHeaders("server-timing").size());
 
         TraceLog log = TraceLog.fromJSON(result.getResponse().getHeader("thaliatrace"));
         assertEquals("test", log.getApplicationName());
@@ -145,6 +148,8 @@ public class SimpleInvocationTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(header().exists("thaliatrace"))
                 .andReturn();
+
+        assertEquals(2, result.getResponse().getHeaders("server-timing").size());
 
         TraceLog log = TraceLog.fromJSON(result.getResponse().getHeader("thaliatrace"));
         assertEquals("test", log.getApplicationName());
@@ -172,6 +177,8 @@ public class SimpleInvocationTest {
                 .andReturn();
 
         restServiceServer.verify();
+
+        assertEquals(2, result.getResponse().getHeaders("server-timing").size());
 
         TraceLog log = TraceLog.fromJSON(result.getResponse().getHeader("thaliatrace"));
         assertEquals("test", log.getApplicationName());
