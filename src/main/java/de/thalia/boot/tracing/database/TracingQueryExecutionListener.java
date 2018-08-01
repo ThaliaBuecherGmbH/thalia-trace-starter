@@ -96,7 +96,7 @@ public class TracingQueryExecutionListener implements QueryExecutionListener {
      *            der Name der Datenquelle, auf deren Übereinstimmung geprüft werden soll
      * @return falls verfügbar, das passende {@link QuerySpan}-Element, ansonste {@code null}
      */
-    static QuerySpan findeKandidatenFuerMerge(final List<Span> spans, final String dataSourceName) {
+    public static QuerySpan findeKandidatenFuerMerge(final List<Span> spans, final String dataSourceName) {
         if (null == spans || spans.isEmpty()) {
             return null;
         }

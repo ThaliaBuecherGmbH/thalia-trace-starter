@@ -65,7 +65,14 @@ Add the following Maven dependency to your Spring Boot 2 project:
 </dependency>
 ```
 
-This will automatically enable the feature. Invocation stats are automatically collected on
+This will automatically enable the feature. Please make sure the following Spring configuration
+properties are set:
+
+```
+spring.application.name=<name of your application>
+```
+
+Invocation stats are automatically collected on
 a per request basis, but not yet exposed to the outside world. This must be enabled by sending
 the following HTTP header:
 
@@ -77,7 +84,7 @@ Please note that Datasource instrumentation is disabled by default. You have to 
 setting the following configuration property:
 
 ```
-tracing.database.enabled: true
+tracing.database.enabled=true
 ```
 
 How we are getting two new HTTP headers as part of the response:
