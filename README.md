@@ -11,7 +11,7 @@ find potential performance bottlenecks.
 There are some very famous tracing solutions (e.g. Zipkin/Opentracing) available. Most of them gather invocation traces in some way
 and write them back to a central data store. Traces can then be analyzed. This concept introduces some drawbacks:
 
-* The central data store tend to become *really huge* on high traffic sites
+* The central data store tends to become *really huge* on high traffic sites
 * Tracing is always enabled. We gather a lot of data, but most of it isn't touched again
 * Infrastructure costs can and *will* explode
 * We introduce a possible (security) singularity in form of the central data store
