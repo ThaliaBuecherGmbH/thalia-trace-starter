@@ -18,7 +18,9 @@ package de.thalia.boot.tracing;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Basisklasse für alle Zeitschlitze.
@@ -26,7 +28,8 @@ import lombok.Getter;
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
-public abstract class Span {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class Span {
 
     private String name;
     private long startTime;

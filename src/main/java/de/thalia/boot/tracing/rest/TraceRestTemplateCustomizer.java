@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.thalia.boot.tracing;
+package de.thalia.boot.tracing.rest;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
+import de.thalia.boot.tracing.TraceLog;
+import de.thalia.boot.tracing.Tracer;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.client.RestTemplateCustomizer;

@@ -17,6 +17,8 @@ package de.thalia.boot.tracing;
 
 import javax.annotation.PostConstruct;
 
+import de.thalia.boot.tracing.hystrix.HystrixRequestContextFilter;
+import de.thalia.boot.tracing.rest.TraceRestTemplateCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

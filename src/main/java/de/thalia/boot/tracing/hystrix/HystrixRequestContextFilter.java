@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.thalia.boot.tracing;
+package de.thalia.boot.tracing.hystrix;
 
 import java.io.IOException;
 
@@ -26,6 +26,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import de.thalia.boot.tracing.hystrix.HystrixRequestHolder;
 
 /**
  * Dieser Filter initialisiert den {@link HystrixRequestContext} für den aktuellen Request. Dadurch können

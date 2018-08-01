@@ -18,6 +18,6 @@ package de.thalia.boot.tracing;
 public class DefaultMetricExporter implements MetricExporter {
 
     @Override
-    public void exportMetricsFor(TraceLog theLog, String theInvokedPattern) {
+    public void exportMetricsFor(TraceLog theLog, String invokedPattern) {
     }
 }

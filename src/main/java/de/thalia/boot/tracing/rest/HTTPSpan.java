@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.thalia.boot.tracing;
+package de.thalia.boot.tracing.rest;
 
 import java.net.URI;
 
+import de.thalia.boot.tracing.Span;
+import de.thalia.boot.tracing.TraceLog;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 

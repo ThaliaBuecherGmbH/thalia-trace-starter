@@ -83,7 +83,7 @@ tracing.database.enabled: true
 How we are getting two new HTTP headers as part of the response:
 
 ```
-HALIATRACE: <JSONDATA>
+THALIATRACE: <JSONDATA>
 ``` 
 
 Here is an example of such a JSON structure:

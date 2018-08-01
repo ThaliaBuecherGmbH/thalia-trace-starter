@@ -16,5 +16,5 @@
 package de.thalia.boot.tracing;
 
 public interface MetricExporter {
-    void exportMetricsFor(TraceLog theLog, String theInvokedPattern);
+    void exportMetricsFor(TraceLog theLog, String invokedPattern);
 }
