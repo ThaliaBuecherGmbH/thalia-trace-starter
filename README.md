@@ -1,4 +1,4 @@
-# Thalia Spring Boot starter for call tracing
+# Thalia Spring Boot Starter for Call Tracing and distributed Profiling
 
 [![Build Status](https://travis-ci.org/ThaliaBuecherGmbH/thalia-trace-starter.svg?branch=master)](https://travis-ci.org/ThaliaBuecherGmbH/thalia-trace-starter) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.thalia.boot.trace/thalia-trace-starter/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.thalia.boot.trace/thalia-trace-starter)
 
