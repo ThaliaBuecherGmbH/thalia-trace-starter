@@ -10,7 +10,7 @@
 
     <groupId>de.thalia.boot.trace</groupId>
     <artifactId>thalia-trace-starter</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>Thalia Spring Boot starter for call tracing</name>
@@ -23,7 +23,7 @@
         <url>https://github.com/ThaliaBuecherGmbH/thalia-trace-starter</url>
         <connection>scm:git:https://github.com/ThaliaBuecherGmbH/thalia-trace-starter.git</connection>
         <developerConnection>scm:git:https://github.com/ThaliaBuecherGmbH/thalia-trace-starter.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>1.0.0</tag>
     </scm>
 
     <properties>
