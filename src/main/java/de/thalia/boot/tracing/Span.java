@@ -16,6 +16,7 @@
 package de.thalia.boot.tracing;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AccessLevel;
@@ -27,6 +28,7 @@ import lombok.NoArgsConstructor;
  */
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Span {
