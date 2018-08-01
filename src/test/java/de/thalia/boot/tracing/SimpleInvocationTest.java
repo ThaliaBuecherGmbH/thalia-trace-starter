@@ -92,7 +92,6 @@ public class SimpleInvocationTest {
         TraceLog log = TraceLog.fromJSON(result.getResponse().getHeader("thaliatrace"));
         assertEquals("test", log.getApplicationName());
         assertNotNull(log.getHostName());
-        assertThat(log.getStartTime(), Matchers.greaterThanOrEqualTo(System.currentTimeMillis() - 250));
         assertTrue(log.getDuration() >= 100);
         assertNull(log.getSpans());
     }
