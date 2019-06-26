@@ -22,7 +22,7 @@ public class CircuitBreakerSpanAspect implements Ordered {
 
     @Override
     public int getOrder() {
-        return Integer.MIN_VALUE;
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 
     @Around(value = "@annotation(io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker)")
