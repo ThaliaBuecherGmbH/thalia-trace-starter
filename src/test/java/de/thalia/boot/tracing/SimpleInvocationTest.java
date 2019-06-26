@@ -32,11 +32,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,17 +56,29 @@ import org.springframework.web.client.RestTemplate;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.autoconfigure.CircuitBreakerConfigurationOnMissingBean;
+import io.github.resilience4j.circuitbreaker.configure.CircuitBreakerConfigurationProperties;
+
 @RunWith(SpringRunner.class)
-@WebMvcTest(value = SimpleInvocationTest.SimpleResource.class)
-@ContextConfiguration(classes = {TraceConfig.class, SimpleInvocationTest.Config.class })
+@SpringBootTest
+@AutoConfigureMockMvc
+@ContextConfiguration(classes = { TraceConfig.class, CircuitBreakerConfigurationProperties.class,
+        CircuitBreakerConfigurationOnMissingBean.class, SimpleInvocationTest.Config.class })
 public class SimpleInvocationTest {
 
     @Configuration
+    @EnableAspectJAutoProxy
     public static class Config {
 
         @Bean
         public RestTemplateBuilder restTemplateBuilder(RestTemplateCustomizer... customizer) {
             return new RestTemplateBuilder(customizer);
+        }
+
+        @Bean
+        public SimpleResource resource(RestTemplateBuilder builder) {
+            return new SimpleResource(builder);
         }
     }
 
@@ -74,7 +88,12 @@ public class SimpleInvocationTest {
         private final RestTemplate restTemplate;
 
         public SimpleResource(RestTemplateBuilder builder) {
+
             restTemplate = builder.build();
+        }
+
+        public RestTemplate getRestTemplate() {
+            return restTemplate;
         }
 
         @GetMapping(value = "/api/dosomething")
@@ -97,8 +116,14 @@ public class SimpleInvocationTest {
         }
 
         @GetMapping(value = "/api/dosomethingrest")
-        public ResponseEntity<String> doSomethingrest() throws InterruptedException, URISyntaxException {
+        public ResponseEntity<String> doSomethingrest() throws URISyntaxException {
             restTemplate.getForObject(new URI("http://localhost"), String.class);
+            return ResponseEntity.ok().build();
+        }
+
+        @GetMapping(value = "/api/dosomethingcircuit")
+        @CircuitBreaker(name = "breaker")
+        public ResponseEntity<String> doSomethingCircuit() {
             return ResponseEntity.ok().build();
         }
     }
@@ -113,24 +138,20 @@ public class SimpleInvocationTest {
 
     @Before
     public void setUp() {
-        restServiceServer = MockRestServiceServer.createServer(simpleResource.restTemplate);
+        restServiceServer = MockRestServiceServer.createServer(simpleResource.getRestTemplate());
     }
 
     @Test
     public void testWithoutFeatureToggle() throws Exception {
-        mvc.perform(get("/api/dosomething"))
-            .andExpect(status().is2xxSuccessful())
-            .andExpect(header().doesNotExist("thaliatrace"))
-            .andExpect(header().doesNotExist("sever-timing")).andReturn();
+        mvc.perform(get("/api/dosomething")).andExpect(status().is2xxSuccessful()).andExpect(header().doesNotExist("thaliatrace"))
+                .andExpect(header().doesNotExist("sever-timing")).andReturn();
     }
 
     @Test
     public void testWithFeatureToggle() throws Exception {
 
-        MvcResult result = mvc.perform(get("/api/dosomething").header("THALIATRACE","true"))
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(header().exists("thaliatrace"))
-                .andReturn();
+        MvcResult result = mvc.perform(get("/api/dosomething").header("THALIATRACE", "true"))
+                .andExpect(status().is2xxSuccessful()).andExpect(header().exists("thaliatrace")).andReturn();
 
         assertEquals(1, result.getResponse().getHeaders("server-timing").size());
 
@@ -144,10 +165,8 @@ public class SimpleInvocationTest {
     @Test
     public void testHystrix() throws Exception {
 
-        MvcResult result = mvc.perform(get("/api/dosomethinghystrix").header("THALIATRACE","true"))
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(header().exists("thaliatrace"))
-                .andReturn();
+        MvcResult result = mvc.perform(get("/api/dosomethinghystrix").header("THALIATRACE", "true"))
+                .andExpect(status().is2xxSuccessful()).andExpect(header().exists("thaliatrace")).andReturn();
 
         assertEquals(2, result.getResponse().getHeaders("server-timing").size());
 
@@ -165,16 +184,34 @@ public class SimpleInvocationTest {
     }
 
     @Test
+    public void testCircuit() throws Exception {
+        MvcResult result = mvc.perform(get("/api/dosomethingcircuit").header("THALIATRACE", "true"))
+                .andExpect(status().is2xxSuccessful()).andExpect(header().exists("thaliatrace")).andReturn();
+
+        assertEquals(2, result.getResponse().getHeaders("server-timing").size());
+
+        TraceLog log = TraceLog.fromJSON(result.getResponse().getHeader("thaliatrace"));
+        assertEquals("test", log.getApplicationName());
+        assertNotNull(log.getHostName());
+
+        List<Span> spans = log.getSpans();
+        assertEquals(1, spans.size());
+        Span singleSpan = spans.get(0);
+
+        assertEquals("breaker", singleSpan.getName());
+        assertTrue(singleSpan.getDuration() >= 0);
+        assertTrue(singleSpan.getStartTime() >= log.getStartTime());
+    }
+
+    @Test
     public void testRest() throws Exception {
 
         restServiceServer.expect(MockRestRequestMatchers.requestTo("http://localhost"))
                 .andExpect(MockRestRequestMatchers.method(HttpMethod.GET))
                 .andRespond(MockRestResponseCreators.withSuccess("ok", MediaType.TEXT_PLAIN));
 
-        MvcResult result = mvc.perform(get("/api/dosomethingrest").header("THALIATRACE","true"))
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(header().exists("thaliatrace"))
-                .andReturn();
+        MvcResult result = mvc.perform(get("/api/dosomethingrest").header("THALIATRACE", "true"))
+                .andExpect(status().is2xxSuccessful()).andExpect(header().exists("thaliatrace")).andReturn();
 
         restServiceServer.verify();
 

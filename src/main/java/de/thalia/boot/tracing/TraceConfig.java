@@ -15,10 +15,11 @@
  */
 package de.thalia.boot.tracing;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import javax.annotation.PostConstruct;
 
-import de.thalia.boot.tracing.hystrix.HystrixRequestContextFilter;
-import de.thalia.boot.tracing.rest.TraceRestTemplateCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -32,10 +33,11 @@ import com.netflix.hystrix.Hystrix;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 
 import de.thalia.boot.tracing.database.DatasourceWrappingBeanPostProcessor;
+import de.thalia.boot.tracing.hystrix.HystrixRequestContextFilter;
+import de.thalia.boot.tracing.resilience4j.CircuitBreakerSpanAspect;
+import de.thalia.boot.tracing.rest.TraceRestTemplateCustomizer;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import lombok.AllArgsConstructor;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 @ConditionalOnWebApplication
 @Configuration
@@ -94,4 +96,16 @@ public class TraceConfig {
             return new DatasourceWrappingBeanPostProcessor(tracer);
         }
     }
+
+    @ConditionalOnClass(CircuitBreaker.class)
+    @AllArgsConstructor
+    @Configuration
+    static class Resilience4JConfiguration {
+
+        @Bean
+        public CircuitBreakerSpanAspect circuitBreakerSpanAspect(Tracer tracer) {
+            return new CircuitBreakerSpanAspect(tracer);
+        }
+    }
+
 }
