@@ -52,6 +52,7 @@ configuration approach.
 * Spring managed `org.springframework.boot.web.client.RestTemplateBuilder`
 * Spring managed JDBC `java.sql.DataSource`
 * Hystrix commands by custom `com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook`
+* Resilience4J Circuit Breaker by intercepting `io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker `
 
 ## Configuration
 
