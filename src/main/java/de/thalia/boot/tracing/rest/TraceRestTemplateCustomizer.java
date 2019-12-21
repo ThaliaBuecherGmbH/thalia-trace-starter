@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
-import de.thalia.boot.tracing.TraceLog;
-import de.thalia.boot.tracing.Tracer;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.client.RestTemplateCustomizer;
@@ -35,6 +33,8 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import de.thalia.boot.tracing.TraceLog;
+import de.thalia.boot.tracing.Tracer;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -106,7 +106,7 @@ public class TraceRestTemplateCustomizer implements RestTemplateCustomizer {
         // Wir versuchen deshalb, den Namen aus dem Stack-Trace zu erraten
         String theGuessedName = "unknown";
         StackTraceElement[] theCurrentTrace = Thread.currentThread().getStackTrace();
-        for (int i=0; i<= theCurrentTrace.length; i++) {
+        for (int i = 0; i < theCurrentTrace.length; i++) {
             StackTraceElement theElement = theCurrentTrace[i];
             String theDefiningClass = theElement.getClassName();
             int p = theDefiningClass.lastIndexOf(".");
